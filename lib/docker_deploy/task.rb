@@ -41,7 +41,7 @@ module DockerDeploy
             desc "Start a #{context.container} container using the latest image."
             task :start do
               on stage.servers do
-                execute :docker, "run -d -p 80:8080 #{stage.options} --name #{context.container} #{context.image}"
+                execute :docker, "run -d #{stage.mappings} #{stage.options} --name #{context.container} #{context.image}"
 
                 puts "\n\nStarted: #{stage.host}\n"
               end

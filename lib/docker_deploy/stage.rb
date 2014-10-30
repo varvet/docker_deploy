@@ -7,11 +7,16 @@ module DockerDeploy
       @name = name
       @servers = []
       @environment = {}
+      @ports = []
       @deploy = ["docker:build", "docker:push", :pull, :restart]
     end
 
     def env(key, value)
       @environment[key] = value
+    end
+
+    def port(ports = {})
+      @ports.merge!(ports)
     end
 
     def deploy(sequence = nil)
@@ -26,6 +31,12 @@ module DockerDeploy
 
     def server(server)
       @servers << SSHKit::Host.new(server)
+    end
+
+    def mappings
+      @context.ports.merge(@ports).each_with_object("") do |(from, to), s|
+        s << " -p %d:%d " % [from, to]
+      end
     end
 
     def options
