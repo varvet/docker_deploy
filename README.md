@@ -1,6 +1,7 @@
 # DockerDeploy
 
-TODO: Write a gem description
+Deploy docker containers via Rake. This is especially useful for dockerized
+Ruby applications.
 
 ## Installation
 
@@ -8,22 +9,57 @@ Add this line to your application's Gemfile:
 
     gem 'docker_deploy'
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install docker_deploy
-
 ## Usage
 
-TODO: Write usage instructions here
+In your Rakefile define your deployment setup like this:
 
-## Contributing
+``` ruby
+DockerDeploy.task do
+  image "elabs/projectpuzzle"
 
-1. Fork it ( https://github.com/[my-github-username]/docker_deploy/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+  env "RAILS_ENV", "production"
+
+  stage :staging do
+    server "ubuntu@staging.projectpuzzle.com"
+    env "CANONICAL_HOST", "staging.projectpuzzle.com"
+    host "http://staging.projectpuzzle.com"
+  end
+
+  stage :production do
+    server "ubuntu@app1.projectpuzzle.com"
+    server "ubuntu@app2.projectpuzzle.com"
+    env "CANONICAL_HOST", "projectpuzzle.com"
+    host "http://projectpuzzle.com"
+  end
+end
+```
+
+If you're packaging a Rails application you might want to add this in
+`lib/tasks/docker.rake` instead.
+
+DockerDeploy has now generated a ton of rake tasks for you. You can inspect
+which ones are available by running:
+
+``` sh
+rake -T docker
+```
+
+To deploy your application to the server, the server must have docker installed
+and running and available without `sudo`. See the docker documentation on setting
+this up. Try running:
+
+```
+rake docker:staging:deploy
+```
+
+This should package your application, send it to the docker registry, pull it down
+on the remote server and finally run it as a docker container.
+
+## Known issues
+
+* The `console` task is currently broken. We were unable to figure out how to
+create an interactive session via `sshkit`.
+
+## License
+
+[MIT](LICENSE.txt)
