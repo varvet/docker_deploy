@@ -21,6 +21,8 @@ DockerDeploy.task do
 
   env "RAILS_ENV", "production"
 
+  port 80 => 3000
+
   stage :staging do
     server "ubuntu@staging.projectpuzzle.com"
     env "CANONICAL_HOST", "staging.projectpuzzle.com"
