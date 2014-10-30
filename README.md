@@ -57,6 +57,16 @@ rake docker:staging:deploy
 This should package your application, send it to the docker registry, pull it down
 on the remote server and finally run it as a docker container.
 
+## Adding a Dockerfile
+
+These instructions assume you already have a Dockerfile set up. If you want to
+package a Rails application, this might give you something to get you started:
+
+``` dockerfile
+FROM rails:onbuild
+RUN bundle exec rake assets:precompile
+```
+
 ## Known issues
 
 * The `console` task is currently broken. We were unable to figure out how to
