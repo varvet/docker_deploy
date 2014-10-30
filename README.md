@@ -7,7 +7,9 @@ Ruby applications.
 
 Add this line to your application's Gemfile:
 
-    gem 'docker_deploy'
+``` ruby
+gem 'docker_deploy'
+```
 
 ## Usage
 
