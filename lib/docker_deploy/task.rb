@@ -10,12 +10,12 @@ module DockerDeploy
 
         desc "Builds the application"
         task :build do
-          sh "docker build -t #{context.image}:#{context.revision} ."
+          sh "docker build -t #{context.image}:#{context.revision} -t #{context.image}:latest ."
         end
 
         desc "Push the application to docker"
         task :push do
-          sh "docker push #{context.image}:#{context.revision}"
+          sh "docker push #{context.image}"
         end
 
         context.stages.each do |stage|
@@ -27,7 +27,7 @@ module DockerDeploy
             desc "pull down code from repository"
             task :pull do
               on stage.servers do
-                execute :docker, "pull #{context.image}:#{context.revision}"
+                execute :docker, "pull #{context.image}"
               end
             end
 
@@ -41,7 +41,7 @@ module DockerDeploy
             desc "Start a #{context.container} container using the latest image."
             task :start do
               on stage.servers do
-                execute :docker, "run -d #{stage.mappings} #{stage.options} --name #{context.container} #{context.image}"
+                execute :docker, "run -d #{stage.mappings} #{stage.options} --name #{context.container} #{context.image}:latest"
 
                 puts "\n\nStarted: #{stage.host}\n"
               end
@@ -50,7 +50,7 @@ module DockerDeploy
             desc "Run migrations in the latest known Docker image."
             task :migrate do
               on stage.servers.first do
-                execute :docker, "run #{stage.options} -i -t --rm=true #{context.image} bundle exec rake db:create db:migrate"
+                execute :docker, "run #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rake db:create db:migrate"
               end
             end
 
@@ -59,7 +59,7 @@ module DockerDeploy
               puts "Console is currently broken :("
               puts "Run:\n"
               puts "ssh #{stage.servers.first}"
-              puts "docker run #{stage.options} -i -t --rm=true #{context.image} bundle exec rails console"
+              puts "docker run #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rails console"
             end
 
             desc "Restart the running containers. This will reboot them with the new code."
