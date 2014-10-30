@@ -5,7 +5,7 @@ module DockerDeploy
     def initialize
       @stages = []
       @environment = {}
-      @ports = []
+      @ports = {}
     end
 
     def env(key, value)

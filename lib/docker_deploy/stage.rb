@@ -7,7 +7,7 @@ module DockerDeploy
       @name = name
       @servers = []
       @environment = {}
-      @ports = []
+      @ports = {}
       @deploy = ["docker:build", "docker:push", :pull, :restart]
     end
 
