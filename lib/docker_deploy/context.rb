@@ -25,6 +25,10 @@ module DockerDeploy
       @image.split("/").last
     end
 
+    def revision
+      @revision ||= `git rev-parse HEAD`.chomp[0...8]
+    end
+
     def stage(name, &block)
       stage = Stage.new(self, name)
       stage.instance_eval(&block)

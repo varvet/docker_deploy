@@ -10,12 +10,12 @@ module DockerDeploy
 
         desc "Builds the application"
         task :build do
-          sh "docker build -t #{context.image} ."
+          sh "docker build -t #{context.image}:#{context.revision} ."
         end
 
         desc "Push the application to docker"
         task :push do
-          sh "docker push #{context.image}"
+          sh "docker push #{context.image}:#{context.revision}"
         end
 
         context.stages.each do |stage|
@@ -27,7 +27,7 @@ module DockerDeploy
             desc "pull down code from repository"
             task :pull do
               on stage.servers do
-                execute :docker, "pull #{context.image}"
+                execute :docker, "pull #{context.image}:#{context.revision}"
               end
             end
 
