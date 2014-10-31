@@ -41,7 +41,7 @@ module DockerDeploy
             desc "Start the application in a container using the latest image."
             task :start do
               on stage.servers do
-                execute :docker, "run -d #{stage.mappings} #{stage.options} --name #{context.container} #{context.image}:latest"
+                execute :docker, "run -d #{stage.port_mappings} #{stage.link_mappings} #{stage.options} --name #{context.container} #{context.image}:latest"
 
                 puts "\n\nStarted: #{stage.host}\n"
               end
@@ -50,7 +50,7 @@ module DockerDeploy
             desc "Run migrations in the latest image."
             task :migrate do
               on stage.servers.first do
-                execute :docker, "run #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rake db:create db:migrate"
+                execute :docker, "run  #{stage.link_mappings} #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rake db:create db:migrate"
               end
             end
 
@@ -59,7 +59,7 @@ module DockerDeploy
               puts "Console is currently broken :("
               puts "Run:\n"
               puts "ssh #{stage.servers.first}"
-              puts "docker run #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rails console"
+              puts "docker run #{stage.options} -i -t --rm=true #{stage.link_mappings} #{context.image}:latest bundle exec rails console"
             end
 
             desc "Restart the running container."

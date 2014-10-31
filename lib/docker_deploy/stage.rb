@@ -1,6 +1,6 @@
 module DockerDeploy
   class Stage
-    attr_reader :name, :servers, :variables
+    attr_reader :name, :servers, :variables, :links
 
     def initialize(context, name)
       @context = context
@@ -8,6 +8,7 @@ module DockerDeploy
       @servers = []
       @variables = {}
       @ports = {}
+      @links = {}
       @deploy = ["docker:build", "docker:push", :pull, :restart]
     end
 
@@ -17,6 +18,10 @@ module DockerDeploy
 
     def port(ports = {})
       @ports.merge!(ports)
+    end
+
+    def link(links = {})
+      @links.merge!(links)
     end
 
     def deploy(sequence = nil)
@@ -33,7 +38,13 @@ module DockerDeploy
       @servers << SSHKit::Host.new(server)
     end
 
-    def mappings
+    def link_mappings
+      @context.links.merge(@links).each_with_object("") do |(from, to), s|
+        s << " --link %s:%s " % [from, to]
+      end
+    end
+
+    def port_mappings
       @context.ports.merge(@ports).each_with_object("") do |(from, to), s|
         s << " -p %d:%d " % [from, to]
       end
