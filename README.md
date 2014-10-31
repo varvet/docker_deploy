@@ -19,20 +19,24 @@ In your Rakefile define your deployment setup like this:
 DockerDeploy.task do
   image "elabs/projectpuzzle"
 
-  env "RAILS_ENV", "production"
+  env "RAILS_ENV" => "production"
 
   port 80 => 3000
 
   stage :staging do
     server "ubuntu@staging.projectpuzzle.com"
-    env "CANONICAL_HOST", "staging.projectpuzzle.com"
+
+    env "CANONICAL_HOST" => "staging.projectpuzzle.com"
+
     host "http://staging.projectpuzzle.com"
   end
 
   stage :production do
     server "ubuntu@app1.projectpuzzle.com"
     server "ubuntu@app2.projectpuzzle.com"
-    env "CANONICAL_HOST", "projectpuzzle.com"
+
+    env "CANONICAL_HOST" => "projectpuzzle.com"
+
     host "http://projectpuzzle.com"
   end
 end

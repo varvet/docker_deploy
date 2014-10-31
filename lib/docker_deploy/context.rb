@@ -1,15 +1,15 @@
 module DockerDeploy
   class Context
-    attr_reader :stages, :environment, :ports
+    attr_reader :stages, :variables, :ports
 
     def initialize
       @stages = []
-      @environment = {}
+      @variables = {}
       @ports = {}
     end
 
-    def env(key, value)
-      @environment[key] = value
+    def env(variables = {})
+      @variables.merge!(variables)
     end
 
     def port(ports = {})

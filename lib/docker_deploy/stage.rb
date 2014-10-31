@@ -1,18 +1,18 @@
 module DockerDeploy
   class Stage
-    attr_reader :name, :servers, :environment
+    attr_reader :name, :servers, :variables
 
     def initialize(context, name)
       @context = context
       @name = name
       @servers = []
-      @environment = {}
+      @variables = {}
       @ports = {}
       @deploy = ["docker:build", "docker:push", :pull, :restart]
     end
 
-    def env(key, value)
-      @environment[key] = value
+    def env(variables = {})
+      @variables.merge!(variables)
     end
 
     def port(ports = {})
@@ -40,7 +40,7 @@ module DockerDeploy
     end
 
     def options
-      @context.environment.merge(@environment).each_with_object("") do |(k, v), s|
+      @context.variables.merge(@variables).each_with_object("") do |(k, v), s|
         s << " -e %s=%s " % [Shellwords.escape(k), Shellwords.escape(v)] if v.present?
       end
     end
