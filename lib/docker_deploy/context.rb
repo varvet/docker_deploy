@@ -1,9 +1,10 @@
 module DockerDeploy
   class Context
-    attr_reader :stages, :variables, :ports, :links
+    attr_reader :stages, :variables, :ports, :links, :env_files
 
     def initialize
       @stages = []
+      @env_files = []
       @variables = {}
       @ports = {}
       @links = {}
@@ -19,6 +20,10 @@ module DockerDeploy
 
     def link(links = {})
       @links.merge!(links)
+    end
+
+    def env_file(env_file)
+      @env_files.push(env_file)
     end
 
     def image(name = nil)

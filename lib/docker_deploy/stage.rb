@@ -1,11 +1,12 @@
 module DockerDeploy
   class Stage
-    attr_reader :name, :servers, :variables, :links
+    attr_reader :name, :servers, :variables, :links, :env_files
 
     def initialize(context, name)
       @context = context
       @name = name
       @servers = []
+      @env_files = []
       @variables = {}
       @ports = {}
       @links = {}
@@ -24,6 +25,10 @@ module DockerDeploy
       @links.merge!(links)
     end
 
+    def env_file(env_file)
+      @env_files.push(env_file)
+    end
+
     def deploy(sequence = nil)
       @deploy = sequence if sequence
       @deploy
@@ -39,21 +44,25 @@ module DockerDeploy
     end
 
     def link_mappings
-      @context.links.merge(@links).each_with_object("") do |(from, to), s|
-        s << " --link %s:%s " % [from, to]
-      end
+      format_params("--link %s:%s", @context.links.merge(@links))
     end
 
     def port_mappings
-      @context.ports.merge(@ports).each_with_object("") do |(from, to), s|
-        s << " -p %d:%d " % [from, to]
-      end
+      format_params("-p %s:%s", @context.ports.merge(@ports))
     end
 
     def options
-      @context.variables.merge(@variables).each_with_object("") do |(k, v), s|
-        s << " -e %s=%s " % [Shellwords.escape(k), Shellwords.escape(v)] if v.present?
-      end
+      format_params("--env-file %s", @context.env_files + @env_files) + " " +
+      format_params("-e %s=%s", @context.variables.merge(@variables))
+    end
+
+  private
+
+    def format_params(pattern, enumerable)
+      enumerable.map do |args|
+        args = [args].flatten.map { |v| Shellwords.escape(v) }
+        pattern % args
+      end.join(" ")
     end
   end
 end
