@@ -1,11 +1,12 @@
 module DockerDeploy
   class Stage
-    attr_reader :name, :servers, :variables, :links, :env_files
+    include Rake::FileUtilsExt
+
+    attr_reader :name, :servers, :variables, :links, :env_files, :deploy
 
     def initialize(context, name)
       @context = context
       @name = name
-      @servers = []
       @env_files = []
       @variables = {}
       @ports = {}
@@ -29,18 +30,9 @@ module DockerDeploy
       @env_files.push(env_file)
     end
 
-    def deploy(sequence = nil)
-      @deploy = sequence if sequence
-      @deploy
-    end
-
     def host(name = nil)
       @host = name if name
       @host
-    end
-
-    def server(server)
-      @servers << SSHKit::Host.new(server)
     end
 
     def link_mappings

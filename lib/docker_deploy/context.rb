@@ -39,8 +39,14 @@ module DockerDeploy
       @revision ||= `git rev-parse HEAD`.chomp[0...8]
     end
 
+    def local(&block)
+      stage = LocalStage.new(self)
+      stage.instance_eval(&block)
+      @stages << stage
+    end
+
     def stage(name, &block)
-      stage = Stage.new(self, name)
+      stage = RemoteStage.new(self, name)
       stage.instance_eval(&block)
       @stages << stage
     end

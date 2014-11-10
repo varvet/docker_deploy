@@ -5,6 +5,8 @@ require "shellwords"
 require "docker_deploy/version"
 require "docker_deploy/context"
 require "docker_deploy/stage"
+require "docker_deploy/remote_stage"
+require "docker_deploy/local_stage"
 require "docker_deploy/task"
 
 # Improvement on the broken piece of crap text formatter in SSHKit.
