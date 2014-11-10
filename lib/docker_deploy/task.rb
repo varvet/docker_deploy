@@ -37,6 +37,8 @@ module DockerDeploy
             desc "Start the application in a container using the latest image."
             task :start do
               stage.run "docker run -d #{stage.port_mappings} #{stage.link_mappings} #{stage.options} --name #{context.container} #{context.image}:latest"
+
+              puts "\n\nStarted: #{stage.host}\n"
             end
 
             desc "Run migrations in the latest image."
