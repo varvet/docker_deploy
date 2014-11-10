@@ -8,7 +8,7 @@ Ruby applications.
 Add this line to your application's Gemfile:
 
 ``` ruby
-gem 'docker_deploy'
+gem "docker_deploy", require: false
 ```
 
 ## Usage
@@ -16,6 +16,8 @@ gem 'docker_deploy'
 In your Rakefile define your deployment setup like this:
 
 ``` ruby
+require "docker_deploy"
+
 DockerDeploy.task do
   image "elabs/projectpuzzle"
 
