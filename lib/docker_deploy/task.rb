@@ -31,12 +31,12 @@ module DockerDeploy
 
             desc "Stop the application and remove its container"
             task :stop do
-              stage.run "docker inspect #{context.container} 2>&1 > /dev/null && docker stop #{context.container} && docker rm #{context.container} || true"
+              stage.run "docker inspect #{stage.container} 2>&1 > /dev/null && docker stop #{stage.container} && docker rm #{stage.container} || true"
             end
 
             desc "Start the application in a container using the latest image."
             task :start do
-              stage.run "docker run -d #{stage.port_mappings} #{stage.link_mappings} #{stage.options} --name #{context.container} #{context.image}:latest"
+              stage.run "docker run -d #{stage.port_mappings} #{stage.link_mappings} #{stage.options} --name #{stage.container} #{context.image}:latest"
 
               puts "\n\nStarted: #{stage.host}\n"
             end
