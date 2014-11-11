@@ -31,7 +31,7 @@ module DockerDeploy
 
             desc "Stop the application and remove its container"
             task :stop do
-              stage.run "docker inspect #{stage.container} 2>&1 > /dev/null && docker stop #{stage.container} && docker rm #{stage.container} || true"
+              stage.run "docker inspect #{stage.container} 2>&1 > /dev/null && docker kill #{stage.container} && docker rm #{stage.container} || true"
             end
 
             desc "Start the application in a container using the latest image."
