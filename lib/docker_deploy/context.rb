@@ -31,8 +31,9 @@ module DockerDeploy
       @image
     end
 
-    def container
-      @image.split("/").last
+    def container(name = nil)
+      @container = name if name
+      @container or @image.split("/").last
     end
 
     def revision

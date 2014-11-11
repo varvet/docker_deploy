@@ -2,7 +2,7 @@ module DockerDeploy
   class Stage
     include Rake::FileUtilsExt
 
-    attr_reader :name, :servers, :variables, :links, :env_files, :deploy
+    attr_reader :name, :servers, :variables, :links, :env_files, :deploy, :container
 
     def initialize(context, name)
       @context = context
@@ -46,6 +46,11 @@ module DockerDeploy
     def options
       format_params("--env-file %s", @context.env_files + @env_files) + " " +
       format_params("-e %s=%s", @context.variables.merge(@variables))
+    end
+
+    def container(name = nil)
+      @container = name if name
+      @container or @context.container
     end
 
   private
