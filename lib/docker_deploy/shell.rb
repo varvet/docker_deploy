@@ -1,6 +1,6 @@
 module DockerDeploy
   def self.shell(server, command = nil)
-    Net::SSH.start('app1.projectpuzzle.com', 'ubuntu') do |ssh|
+    Net::SSH.start(server.hostname, server.user, server.netssh_options) do |ssh|
       channel = ssh.open_channel do |ch|
         ch.on_data do |c, data|
           $stdout.print data
