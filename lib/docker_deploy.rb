@@ -5,11 +5,21 @@ require "io/console"
 
 require "docker_deploy/version"
 require "docker_deploy/shell"
+require "docker_deploy/service"
 require "docker_deploy/context"
 require "docker_deploy/stage"
 require "docker_deploy/remote_stage"
 require "docker_deploy/local_stage"
 require "docker_deploy/task"
+
+module DockerDeploy
+  def self.format_params(pattern, enumerable)
+    enumerable.map do |args|
+      args = [args].flatten.map { |v| Shellwords.escape(v) }
+      pattern % args
+    end.join(" ")
+  end
+end
 
 # Improvement on the broken piece of crap text formatter in SSHKit.
 class PlainFormatter < SSHKit::Formatter::Abstract

@@ -33,7 +33,32 @@ module DockerDeploy
             task :start do
               stage.run "docker run -d #{stage.port_mappings} #{stage.link_mappings} #{stage.options} --name #{stage.container} #{context.image}:latest"
 
-              puts "\n\nStarted: #{stage.host}\n"
+              puts "\n\nstarted: #{stage.host}\n"
+            end
+
+            desc "Restart the running container."
+            task restart: [:stop, :start]
+
+            stage.services.each do |service|
+              namespace service.name do
+                desc "Stop the #{service.name} service and remove its container"
+                task :stop do
+                  stage.run "docker inspect #{service.container} 2>&1 > /dev/null && docker kill #{service.container} && docker rm #{service.container} || true"
+                end
+
+                desc "Start the #{service.name} service in a container using the latest image."
+                task :start do
+                  stage.run "docker run -d #{service.port_mappings} #{stage.link_mappings} #{stage.options} --name #{service.container} #{context.image}:latest #{service.command}"
+                end
+
+                desc "Restart the #{service.name} service."
+                task restart: [:stop, :start]
+
+                desc "Tail log of the #{service.name} service."
+                task :tail do
+                  stage.run "docker logs --tail 50 -f #{service.container}"
+                end
+              end
             end
 
             desc "Run migrations in the latest image."
@@ -67,9 +92,6 @@ module DockerDeploy
                 stage.shell
               end
             end
-
-            desc "Restart the running container."
-            task restart: [:stop, :start]
           end
         end
       end
