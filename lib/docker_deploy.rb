@@ -1,8 +1,10 @@
 require "sshkit"
 require "sshkit/dsl"
 require "shellwords"
+require "io/console"
 
 require "docker_deploy/version"
+require "docker_deploy/shell"
 require "docker_deploy/context"
 require "docker_deploy/stage"
 require "docker_deploy/remote_stage"

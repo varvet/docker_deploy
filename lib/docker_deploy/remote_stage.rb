@@ -15,10 +15,8 @@ module DockerDeploy
       end
     end
 
-    def run_once(cmd)
-      on servers.first do
-        execute(cmd)
-      end
+    def shell(cmd = nil)
+      DockerDeploy.shell(servers.first, cmd)
     end
   end
 end

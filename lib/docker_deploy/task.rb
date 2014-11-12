@@ -24,11 +24,6 @@ module DockerDeploy
             desc "deploy the application"
             task deploy: stage.deploy
 
-            desc "Pull down code from the docker registry"
-            task :pull do
-              stage.run "docker pull #{context.image}"
-            end
-
             desc "Stop the application and remove its container"
             task :stop do
               stage.run "docker inspect #{stage.container} 2>&1 > /dev/null && docker kill #{stage.container} && docker rm #{stage.container} || true"
@@ -43,30 +38,33 @@ module DockerDeploy
 
             desc "Run migrations in the latest image."
             task :migrate do
-              stage.run_once "docker run #{stage.link_mappings} #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rake db:create db:migrate"
+              stage.shell "docker run #{stage.link_mappings} #{stage.options} -i -t --rm=true #{context.image}:latest bundle exec rake db:create db:migrate"
             end
 
             desc "Run a Rails console in a container"
             task :console do
-              cmd = "docker run #{stage.options} -i -t --rm=true #{stage.link_mappings} #{context.image}:latest bundle exec rails console"
-              if stage.is_a?(RemoteStage)
-                puts "Console is currently broken :("
-                puts "SSH in and run:\n"
-                puts cmd
-              else
-                stage.run_once(cmd)
-              end
+              stage.shell "docker run #{stage.options} -i -t --rm=true #{stage.link_mappings} #{context.image}:latest bundle exec rails console"
             end
 
             desc "Run a shell in a container"
             task :shell do
-              cmd = "docker run #{stage.options} -i -t --rm=true #{stage.link_mappings} #{context.image}:latest /bin/bash"
-              if stage.is_a?(RemoteStage)
-                puts "Shell is currently broken :("
-                puts "SSH in and run:\n"
-                puts cmd
-              else
-                stage.run_once(cmd)
+              stage.shell "docker run #{stage.options} -i -t --rm=true #{stage.link_mappings} #{context.image}:latest /bin/bash"
+            end
+
+            desc "Tail log files"
+            task :tail do
+              stage.run "docker logs --tail 50 -f #{stage.container}"
+            end
+
+            if stage.is_a?(RemoteStage)
+              desc "Pull down code from the docker registry"
+              task :pull do
+                stage.run "docker pull #{context.image}"
+              end
+
+              desc "SSH into a host server"
+              task :ssh do
+                stage.shell
               end
             end
 

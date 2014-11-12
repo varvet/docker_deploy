@@ -13,6 +13,6 @@ module DockerDeploy
     def run(cmd)
       sh(cmd)
     end
-    alias_method :run_once, :run
+    alias_method :shell, :run
   end
 end
