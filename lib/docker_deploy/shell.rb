@@ -23,7 +23,7 @@ module DockerDeploy
 
       Thread.new(write) do |write|
         loop do
-          buf = $stdin.raw { |r| r.readpartial(1) }
+          buf = $stdin.getch
           write.write(buf)
         end
       end
