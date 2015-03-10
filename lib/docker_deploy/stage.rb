@@ -57,7 +57,6 @@ module DockerDeploy
     def service(name, &block)
       service = Service.new(self, name)
       service.instance_eval(&block)
-      @deploy << "#{name}:restart"
       @services << service
     end
   end

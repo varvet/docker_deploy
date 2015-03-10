@@ -24,6 +24,11 @@ module DockerDeploy
             desc "deploy the application"
             task deploy: stage.deploy
 
+            namespace :deploy do
+              desc "deploy the application and run migrations"
+              task migrations: stage.deploy.insert(-2, :migrate)
+            end
+
             desc "Stop the application and remove its container"
             task :stop do
               stage.run "docker inspect #{stage.container} 2>&1 > /dev/null && docker kill #{stage.container} && docker rm #{stage.container} || true"
