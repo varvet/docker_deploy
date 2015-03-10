@@ -59,6 +59,9 @@ module DockerDeploy
                   stage.run "docker logs --tail 50 -f #{service.container}"
                 end
               end
+
+              task start: "#{service.name}:start"
+              task stop: "#{service.name}:stop"
             end
 
             desc "Run migrations in the latest image."
