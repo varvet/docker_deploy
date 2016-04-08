@@ -1,5 +1,7 @@
 module DockerDeploy
   class RemoteStage < Stage
+    include SSHKit::DSL
+
     def initialize(context, name)
       super
       @servers = []

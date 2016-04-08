@@ -29,7 +29,7 @@ class PlainFormatter < SSHKit::Formatter::Abstract
 
   def write(obj)
     if obj.is_a?(SSHKit::Command)
-      @io.write(obj.stdout)
+      @io.write(obj.full_stdout)
     else
       @io.write(obj.to_s)
     end
